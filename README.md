@@ -4,7 +4,6 @@
 
 Sentra is a mental health-focused chatbot and web application that helps users analyze the emotional tone of their writing. It provides a safe space for self-reflection with privacy-first journaling, calming mind games, and deep sentiment analysis.
 
-![Sentra Banner](https://via.placeholder.com/1200x600/FAFAFA/5C7C7C?text=Sentra+Dashboard)
 
 ## ✨ Features
 
