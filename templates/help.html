@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & FAQ | Sentra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+    <header class="navbar container flex-between">
+        <div class="logo"><a href="/">Sentra</a></div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+        </nav>
+    </header>
+
+    <main class="container hero" style="text-align: left; max-width: 800px;">
+        <h1 style="font-size: 2.5rem;">Help Center</h1>
+        <p>Frequently Asked Questions and Guide</p>
+
+        <div class="input-card" style="margin: 40px 0; max-width: 100%;">
+            <h3>How to use Sentra?</h3>
+            <p>Simply type or paste text into the main input box on the home page. Click "Analyze" to see an immediate
+                emotional assessment.</p>
+
+            <h3 style="margin-top: 30px;">What do the results mean?</h3>
+            <p>Sentra categorizes text into moods like "Stress", "Anxiety", or "Normal".</p>
+            <ul style="margin: 10px 20px;">
+                <li><strong>Primary Signal:</strong> The strongest detected emotion.</li>
+                <li><strong>Confidence:</strong> How sure the AI is about this result.</li>
+            </ul>
+
+            <h3 style="margin-top: 30px;">Is this medical advice?</h3>
+            <p><strong>No.</strong> Sentra is an AI tool for self-reflection only. It cannot diagnose mental health
+                conditions. If you are in crisis, please use the <a href="/resources"
+                    style="color: var(--primary-color);">Resources</a> page.</p>
+        </div>
+    </main>
+</body>
+
+</html>

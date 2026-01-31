@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Games | Sentra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        .game-section {
+            padding: 40px;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* Breathing Circle */
+        .breathing-circle {
+            width: 200px;
+            height: 200px;
+            background: #E0F2F1;
+            border-radius: 50%;
+            margin: 40px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transform-origin: center;
+        }
+
+        .breathing-core {
+            width: 180px;
+            height: 180px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.8;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+            transition: transform 4s ease-in-out;
+        }
+
+        /* Memory Grid */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: #f0f0f0;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .memory-card.flipped {
+            background: var(--surface-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .memory-card.matched {
+            background: #E0F2F1;
+            border: 2px solid #80CBC4;
+            cursor: default;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar container flex-between">
+        <div class="logo"><a href="/">Sentra</a></div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/journal">Journal</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h1 style="text-align: center; margin-bottom: 40px;">Mind Games</h1>
+
+        <!-- Breathing Exercise -->
+        <section class="game-section">
+            <h2>4-7-8 Breathing</h2>
+            <p style="color: var(--text-muted);">Inhale for 4s, Hold for 7s, Exhale for 8s.</p>
+
+            <div class="breathing-circle">
+                <div id="breath-core" class="breathing-core">Ready?</div>
+            </div>
+
+            <button id="start-breath-btn" class="btn btn-primary">Start Exercise</button>
+        </section>
+
+        <!-- Memory Game -->
+        <section class="game-section">
+            <h2>Calming Memory</h2>
+            <p style="color: var(--text-muted);">Match the nature symbols to clear your mind.</p>
+
+            <div id="memory-board" class="memory-grid">
+                <!-- Cards injected by JS -->
+            </div>
+
+            <button id="reset-memory-btn" class="btn btn-secondary">Reset Game</button>
+        </section>
+
+    </main>
+
+    <script>
+        // === Breathing Logic ===
+        const breathCore = document.getElementById('breath-core');
+        const startBreathBtn = document.getElementById('start-breath-btn');
+        let isBreathing = false;
+
+        startBreathBtn.addEventListener('click', () => {
+            if (isBreathing) return;
+            isBreathing = true;
+            startBreathBtn.disabled = true;
+            breathCycle();
+        });
+
+        function breathCycle() {
+            if (!isBreathing) return;
+
+            // Inhale (4s)
+            breathCore.textContent = "Inhale";
+            breathCore.style.transform = "scale(1.2)";
+            breathCore.style.opacity = "0.9";
+
+            setTimeout(() => {
+                // Hold (7s)
+                breathCore.textContent = "Hold";
+
+                setTimeout(() => {
+                    // Exhale (8s)
+                    breathCore.textContent = "Exhale";
+                    breathCore.style.transform = "scale(0.8)";
+                    breathCore.style.opacity = "0.6";
+
+                    setTimeout(() => {
+                        breathCycle(); // Loop
+                    }, 8000);
+                }, 7000);
+            }, 4000);
+        }
+
+        // === Memory Game Logic ===
+        const memoryBoard = document.getElementById('memory-board');
+        const emojis = ['🌿', '🌊', '☀️', '🌸', '☁️', '🌙'];
+        let cards = [...emojis, ...emojis];
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        function shuffle(array) {
+            return array.sort(() => 0.5 - Math.random());
+        }
+
+        function initMemory() {
+            memoryBoard.innerHTML = '';
+            cards = shuffle(cards);
+            matchedPairs = 0;
+            flippedCards = [];
+
+            cards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.classList.add('memory-card');
+                card.dataset.emoji = emoji;
+                card.dataset.index = index;
+
+                card.addEventListener('click', handleCardClick);
+                memoryBoard.appendChild(card);
+            });
+        }
+
+        function handleCardClick(e) {
+            const card = e.target;
+            if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) return;
+
+            card.classList.add('flipped');
+            card.textContent = card.dataset.emoji;
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+
+            if (card1.dataset.emoji === card2.dataset.emoji) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                flippedCards = [];
+                if (matchedPairs === emojis.length) {
+                    setTimeout(() => alert("Peaceful mind achieved! 🌿"), 500);
+                }
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card1.textContent = '';
+                    card2.classList.remove('flipped');
+                    card2.textContent = '';
+                    flippedCards = [];
+                }, 1000);
+            }
+        }
+
+        document.getElementById('reset-memory-btn').addEventListener('click', initMemory);
+        initMemory();
+    </script>
+</body>
+
+</html>

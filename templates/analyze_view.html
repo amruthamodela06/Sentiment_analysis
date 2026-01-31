@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detailed Analysis | Mood Analyzer</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <style>
+        /* Specific override for Layout 2 input height */
+        .layout-2-input {
+            min-height: 400px;
+        }
+
+        .highlight {
+            background-color: rgba(232, 155, 133, 0.3);
+            /* Accent color transparent */
+            border-bottom: 2px solid var(--accent-color);
+            padding: 0 4px;
+            border-radius: 4px;
+            cursor: help;
+        }
+
+        .signals-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .signal-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .signal-item::before {
+            content: "•";
+            color: var(--primary-color);
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        .explain-box {
+            margin-top: 40px;
+            background: #fff;
+            padding: 32px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-soft);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header (Minimal) -->
+    <header class="navbar container flex-between">
+        <div class="logo"><a href="/">Sentra</a></div>
+        <nav class="nav-links">
+            <a href="/" style="color: var(--primary-color); font-weight: 500;">Minimal View</a>
+            <a href="/journal">Journal</a>
+            <a href="/games">Games</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/help">Help</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <div class="layout-split">
+            <!-- Left Column: Input -->
+            <div class="panel-left">
+                <div class="input-card" style="margin:0; box-shadow: none; border: 1px solid #eee;">
+                    <textarea id="text-input-detailed" class="layout-2-input"
+                        placeholder="Paste your text here for deep analysis..."></textarea>
+
+                    <div class="card-actions">
+                        <span id="word-count" style="color: #999; font-size: 0.85rem;">0 words</span>
+                        <div>
+                            <button id="clear-btn-detailed" class="btn btn-secondary">Clear</button>
+                            <button id="analyze-btn-detailed" class="btn btn-primary">Analyze</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Analysis -->
+            <div class="panel-right">
+                <!-- Result 1: Primary Mood -->
+                <div class="stat-card">
+                    <div class="stat-label">Primary Emotional Signal</div>
+                    <div id="d-mood-val" class="stat-value">--</div>
+
+                    <div class="stat-label" style="margin-top: 24px;">Confidence</div>
+                    <div id="d-conf-val" style="font-size: 1.2rem; color: var(--text-main);">--%</div>
+                    <div class="confidence-bar">
+                        <div id="d-conf-bar" class="confidence-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Result 2: Secondary Signals (Mocked/Mapped) -->
+                <div class="stat-card">
+                    <div class="stat-label">Likely Associated Feelings</div>
+                    <ul class="signals-list">
+                        <li id="d-sig-1" class="signal-item">Waiting for analysis...</li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div id="support-box"
+                    style="display:none; margin-top: 20px; padding: 16px; background: #fff0f0; border-radius: 8px; color: #c00;">
+                    <strong>Note:</strong> This text contains signals that may require professional support. <a
+                        href="/resources" style="text-decoration:underline;">See resources.</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explainability Section -->
+        <div id="explain-section" class="explain-box" style="display:none;">
+            <h3>Why this result?</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">The AI identified these key phrases as strong
+                indicators:</p>
+            <div id="highlight-content" style="font-size: 1.1rem; line-height: 1.8; color: var(--text-main);">
+                <!-- Highlighted text will appear here -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer container" style="text-align: center; padding: 40px 0; color: #999; font-size: 0.8rem;">
+        &copy; 2026 Sentra.
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Inline script for Layout 2 specific logic (extending main.js logic)
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('text-input-detailed');
+            const btn = document.getElementById('analyze-btn-detailed');
+            const clear = document.getElementById('clear-btn-detailed');
+            const count = document.getElementById('word-count');
+
+            // Output elements
+            const mood = document.getElementById('d-mood-val');
+            const confVal = document.getElementById('d-conf-val');
+            const confBar = document.getElementById('d-conf-bar');
+            const signalsList = document.querySelector('.signals-list');
+            const supportBox = document.getElementById('support-box');
+            const explainSection = document.getElementById('explain-section');
+            const highlightContent = document.getElementById('highlight-content');
+
+            // Pass state from Layout 1 if exists in sessionStorage (optional UX)
+            const storedText = sessionStorage.getItem('analysisText');
+            if (storedText) {
+                input.value = storedText;
+                // Auto-analyze? Maybe not to avoid flicker.
+            }
+
+            input.addEventListener('input', () => {
+                const words = input.value.trim().split(/\s+/).length;
+                count.textContent = input.value.trim() ? `${words} words` : '0 words';
+            });
+
+            btn.addEventListener('click', async () => {
+                const text = input.value.trim();
+                if (!text) return;
+
+                btn.textContent = "Analyzing...";
+                btn.disabled = true;
+
+                try {
+                    const response = await fetch('/predict', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: text })
+                    });
+                    const data = await response.json();
+
+                    renderResults(data, text);
+
+                } catch (e) {
+                    console.error(e);
+                    alert("Analysis failed.");
+                } finally {
+                    btn.textContent = "Analyze";
+                    btn.disabled = false;
+                }
+            });
+
+            clear.addEventListener('click', () => {
+                input.value = '';
+                resetUI();
+            });
+
+            function renderResults(data, originalText) {
+                // 1. Primary Stats
+                mood.textContent = data.mood;
+                confVal.textContent = data.confidence;
+                const confPercent = parseFloat(data.confidence);
+                confBar.style.width = `${confPercent}%`;
+
+                // 2. Signals (Mock logic based on mood)
+                const mockSignals = {
+                    'Depression': ['Sadness', 'Fatigue', 'Hopelessness'],
+                    'Anxiety': ['Worry', 'Tenseness', 'Restlessness'],
+                    'Stress': ['Overwhelm', 'Pressure'],
+                    'Normal': ['Stable', 'Calm'],
+                    'Suicidal': ['Crisis', 'Despair', 'Urgent Help Needed'],
+                    'Bipolar': ['Mood Swings', 'Energy Fluctuations']
+                };
+                const signals = mockSignals[data.mood] || ['Mixed'];
+                signalsList.innerHTML = signals.map(s => `<li class="signal-item">${s}</li>`).join('');
+
+                // 3. Support Box
+                if (['Suicidal', 'Depression', 'Self-harm'].includes(data.mood)) {
+                    supportBox.style.display = 'block';
+                } else {
+                    supportBox.style.display = 'none';
+                }
+
+                // 4. Explainability (Highlights)
+                explainSection.style.display = 'block';
+
+                // Simple highlight logic: replace found keywords in original text
+                // This is naive (case sensitivity issues). Ideally backend returns indices.
+                // We will just highlight case-insensitive matches.
+                let html = originalText;
+
+                // Sort by length desc to avoid partial replacement issues (e.g. 'sad' inside 'sadness')
+                // data.highlighted_phrases comes from backend
+                if (data.highlighted_phrases && data.highlighted_phrases.length > 0) {
+                    data.highlighted_phrases.sort((a, b) => b.length - a.length).forEach(phrase => {
+                        const regex = new RegExp(`\\b${phrase}\\b`, 'gi');
+                        html = html.replace(regex, match => `<span class="highlight" title="Influential term">${match}</span>`);
+                    });
+                } else {
+                    html += " <br><br><em>(No specific keywords strongly influenced this result.)</em>";
+                }
+
+                highlightContent.innerHTML = html;
+            }
+
+            function resetUI() {
+                mood.textContent = '--';
+                confVal.textContent = '--%';
+                confBar.style.width = '0%';
+                signalsList.innerHTML = '<li class="signal-item">Waiting...</li>';
+                explainSection.style.display = 'none';
+                supportBox.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

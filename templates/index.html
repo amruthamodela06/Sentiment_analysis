@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mood Analyzer | Private & Safe</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="navbar container flex-between">
+    <div class="logo">Sentra</div>
+    <nav class="nav-links">
+      <a href="/journal">Journal</a>
+      <a href="/games">Games</a>
+      <a href="/about">About</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/help">Help</a>
+      <a href="#" style="opacity: 0.5;">Detailed View</a> <!-- Placeholder for toggle -->
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- Hero -->
+    <section class="hero container">
+      <h1>Understand emotions in text</h1>
+      <p>A private, non-judgmental sentiment analysis tool.</p>
+    </section>
+
+    <!-- Input Card -->
+    <div class="input-card">
+      <textarea id="text-input" placeholder="Write whatever is on your mind..."></textarea>
+
+      <div class="card-actions">
+        <button id="clear-btn" class="btn btn-secondary">Clear</button>
+        <button id="analyze-btn" class="btn btn-primary">Analyze</button>
+      </div>
+    </div>
+
+    <!-- Result Preview (Hidden by default) -->
+    <div id="result-preview" class="result-preview">
+      <div id="mood-display" class="mood-label">Mood: Low</div>
+      <p id="mood-desc" class="mood-desc">Your text shows signs of emotional fatigue.</p>
+
+      <a href="#" class="link-detailed">
+        View detailed analysis
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+
+    <!-- Support Note -->
+    <div class="support-note">
+      <p>If this brings up difficult feelings, <a href="/resources">support is available.</a></p>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer container" style="text-align: center; padding: 40px 0; color: #999; font-size: 0.8rem;">
+    &copy; 2026 Sentra. Built with Care.
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Journal | Sentra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <header class="navbar container flex-between">
+        <div class="logo"><a href="/">Sentra</a></div>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/games">Games</a>
+            <a href="/help">Help</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- New Entry Section -->
+        <section class="input-card" style="margin-bottom: 40px; box-shadow: none; border: 1px solid #eee;">
+            <h2 style="margin-bottom: 20px;">Todays Entry</h2>
+            <div style="margin-bottom: 20px;">
+                <label style="color: var(--text-muted); font-size: 0.9rem;">How are you feeling?</label>
+                <div class="mood-selector" style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button class="mood-btn" data-mood="5" data-label="Great">🌟</button>
+                    <button class="mood-btn" data-mood="4" data-label="Good">🙂</button>
+                    <button class="mood-btn" data-mood="3" data-label="Okay">😐</button>
+                    <button class="mood-btn" data-mood="2" data-label="Low">😔</button>
+                    <button class="mood-btn" data-mood="1" data-label="Bad">😣</button>
+                </div>
+                <div id="selected-mood-label" style="margin-top: 8px; font-weight: 500; color: var(--primary-color);">
+                </div>
+            </div>
+
+            <textarea id="journal-input" placeholder="What's on your mind today? (Stored privately in your browser)"
+                style="min-height: 150px;"></textarea>
+
+            <div class="card-actions">
+                <span id="save-status"
+                    style="color: var(--primary-color); font-size: 0.9rem; opacity: 0; transition: opacity 0.5s;">Saved!</span>
+                <button id="save-entry-btn" class="btn btn-primary">Save Entry</button>
+            </div>
+        </section>
+
+        <div class="layout-split" style="margin-top: 0; align-items: start;">
+            <!-- Mood History (Graph) -->
+            <div class="panel-left">
+                <div class="stat-card"
+                    style="background: white; padding: 24px; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-soft); border-bottom: none;">
+                    <div class="stat-label">Mood Trends (Last 7 Days)</div>
+                    <canvas id="moodChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Past Entries -->
+            <div class="panel-right" style="padding: 0; background: transparent; box-shadow: none;">
+                <h3 style="margin-bottom: 20px;">Past Entries</h3>
+                <div id="entries-list">
+                    <!-- Injected by JS -->
+                    <p style="color: var(--text-muted);">No entries yet.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/journal.js') }}"></script>
+</body>
+
+</html>
