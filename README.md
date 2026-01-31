@@ -80,6 +80,4 @@ Sentra is a mental health-focused chatbot and web application that helps users a
 
 **If you are in crisis or need immediate help, please contact emergency services or use the resources listed on the `/resources` page of the application.**
 
-## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
